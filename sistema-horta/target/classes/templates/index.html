@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout(~{::title}, ~{::main})">
+<head>
+    <title>Dashboard - Sistema de Horta</title>
+</head>
+<body>
+    <main>
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-4 text-primary">
+                    <i class="bi bi-flower1 me-3"></i>
+                    Dashboard da Horta
+                </h1>
+                <p class="lead text-muted">Visão geral do seu sistema de gerenciamento</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-flower2 display-4 mb-3"></i>
+                        <h3 class="card-title" th:text="${totalPlantas ?: 0}">0</h3>
+                        <p class="card-text">Total de Plantas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-droplet display-4 mb-3"></i>
+                        <h3 class="card-title" th:text="${plantasRega ?: 0}">0</h3>
+                        <p class="card-text">Precisam de Rega</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-scissors display-4 mb-3"></i>
+                        <h3 class="card-title" th:text="${plantasColheita ?: 0}">0</h3>
+                        <p class="card-text">Prontas p/ Colheita</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tools display-4 mb-3"></i>
+                        <h3 class="card-title" th:text="${cuidadosRecentes ?: 0}">0</h3>
+                        <p class="card-text">Cuidados Recentes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-lightning me-2"></i>
+                            Ações Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <a href="/plantas/nova" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-plus-circle me-2"></i>
+                                    Nova Planta
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/plantas" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-list me-2"></i>
+                                    Ver Plantas
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/alertas" class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-bell me-2"></i>
+                                    Alertas
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <a href="/relatorios" class="btn btn-outline-info w-100">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Relatórios
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Content -->
+        <div class="row">
+            <!-- Recent Plants -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-flower2 me-2 text-success"></i>
+                            Plantas Recentes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${plantas != null and !plantas.empty}">
+                            <div th:each="planta : ${plantas}" class="d-flex align-items-center mb-3 p-2 border rounded">
+                                <div class="me-3">
+                                    <i class="bi bi-flower1 text-success fs-4"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1" th:text="${planta.nome}">Nome da Planta</h6>
+                                    <small class="text-muted">
+                                        <span th:text="${planta.tipo}">Tipo</span> • 
+                                        <span th:text="${planta.regiao}">Região</span>
+                                    </small>
+                                    <br>
+                                    <small class="text-muted">
+                                        Plantada em: <span th:text="${#dates.format(planta.dataPlantio, 'dd/MM/yyyy')}">Data</span>
+                                    </small>
+                                </div>
+                                <div>
+                                    <a th:href="@{/plantas/{id}(id=${planta.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${plantas == null or plantas.empty}" class="text-center text-muted py-4">
+                            <i class="bi bi-flower1 display-4 mb-3"></i>
+                            <p>Nenhuma planta cadastrada ainda.</p>
+                            <a href="/plantas/nova" class="btn btn-primary">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Cadastrar Primeira Planta
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="/plantas" class="btn btn-sm btn-outline-primary">
+                            Ver todas as plantas <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Care -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-tools me-2 text-info"></i>
+                            Cuidados Recentes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${cuidados != null and !cuidados.empty}">
+                            <div th:each="cuidado : ${cuidados}" class="d-flex align-items-center mb-3 p-2 border rounded">
+                                <div class="me-3">
+                                    <i th:class="${cuidado.tipo.name() == 'REGA' ? 'bi bi-droplet text-primary' : 
+                                                  cuidado.tipo.name() == 'PODA' ? 'bi bi-scissors text-warning' : 
+                                                  cuidado.tipo.name() == 'COLHEITA' ? 'bi bi-basket text-success' : 
+                                                  'bi bi-tools text-info'} fs-4"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1" th:text="${cuidado.plantaNome}">Nome da Planta</h6>
+                                    <small class="text-muted">
+                                        <span th:text="${cuidado.tipo.descricao}">Tipo</span> • 
+                                        <span th:text="${#dates.format(cuidado.data, 'dd/MM/yyyy')}">Data</span>
+                                    </small>
+                                    <br>
+                                    <small class="text-muted" th:if="${cuidado.observacoes}" th:text="${cuidado.observacoes}">Observações</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${cuidados == null or cuidados.empty}" class="text-center text-muted py-4">
+                            <i class="bi bi-tools display-4 mb-3"></i>
+                            <p>Nenhum cuidado registrado recentemente.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="/cuidados" class="btn btn-sm btn-outline-info">
+                            Ver todos os cuidados <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div th:if="${plantas == null or plantas.empty}" class="row">
+            <div class="col-12">
+                <div class="card border-success">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-flower1 display-1 text-success mb-4"></i>
+                        <h2 class="text-success mb-3">Bem-vindo ao Sistema de Horta!</h2>
+                        <p class="lead mb-4">
+                            Comece cadastrando suas primeiras plantas e acompanhe o crescimento da sua horta.
+                        </p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="/plantas/nova" class="btn btn-success btn-lg">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Cadastrar Planta
+                            </a>
+                            <a href="/api/swagger-ui.html" target="_blank" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-book me-2"></i>
+                                Ver API
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+
